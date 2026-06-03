@@ -238,12 +238,13 @@ final class OnboardingService {
         return String(inviteCode)
     }
 
+    /// Path-style URL for Universal Links (`/i/CODE`), not query-only (`/i/?code=`).
     func inviteURL(for inviteCode: String) -> URL? {
         guard let host = SupabaseConfig.inviteHost else { return nil }
-        var components = URLComponents(string: host)
-        components?.path = "/i/"
-        components?.queryItems = [URLQueryItem(name: "code", value: inviteCode)]
-        return components?.url
+        let base = host.hasSuffix("/") ? String(host.dropLast()) : host
+        let code = inviteCode.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        guard !code.isEmpty else { return nil }
+        return URL(string: "\(base)/i/\(code)")
     }
 
     /// Legacy manual approval path (non-link invites).

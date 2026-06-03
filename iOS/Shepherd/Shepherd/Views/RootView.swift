@@ -25,14 +25,14 @@ struct RootView: View {
         .environment(\.managedObjectContext, CoreDataManager.shared.context)
         .task {
             await syncCoordinator.syncIfNeeded()
-            await InviteDeepLinkHandler.shared.attemptAutomaticJoinIfNeeded(identity: identity)
+            await InviteDeepLinkHandler.shared.attemptDeferredFingerprintJoinIfNeeded(identity: identity)
         }
         .onChange(of: scenePhase) { phase in
             if phase == .active {
                 Task { await syncCoordinator.syncIfNeeded() }
                 if identity.onboardingState == .fresh {
                     Task {
-                        await InviteDeepLinkHandler.shared.attemptAutomaticJoinIfNeeded(identity: identity)
+                        await InviteDeepLinkHandler.shared.attemptDeferredFingerprintJoinIfNeeded(identity: identity)
                     }
                 }
             }

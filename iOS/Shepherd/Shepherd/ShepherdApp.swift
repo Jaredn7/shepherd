@@ -13,6 +13,11 @@ struct ShepherdApp: App {
                 .onOpenURL { url in
                     InviteDeepLinkHandler.shared.handleIncoming(url: url)
                 }
+                .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
+                    if let url = activity.webpageURL {
+                        InviteDeepLinkHandler.shared.handleIncoming(url: url)
+                    }
+                }
         }
     }
 }

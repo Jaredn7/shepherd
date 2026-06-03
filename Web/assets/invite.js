@@ -170,10 +170,13 @@
     sessionStorage.setItem(flowKey, "1");
 
     try {
-      setStatus("Saving your invite…");
+      setStatus("Saving your invite for this device…");
       await recordClick(inviteCode, buildFingerprint());
-      setStatus("Opening Shepherd…");
-      tryOpenApp(inviteCode);
+      setStatus("Opening Shepherd if installed…");
+      if (detectOS() === "iOS" || detectOS() === "Android") {
+        tryOpenApp(inviteCode);
+      }
+      setStatus("Redirecting to the App Store if you need to install…");
       scheduleStoreRedirectIfStillOnPage();
     } catch (error) {
       console.error(error);

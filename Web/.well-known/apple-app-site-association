@@ -4,7 +4,7 @@
     "details": [
       {
         "appID": "W3TV52BXQ2.app.shepherd.Shepherd",
-        "paths": ["/i/*", "/i"]
+        "paths": ["/i", "/i/", "/i/*"]
       }
     ]
   }

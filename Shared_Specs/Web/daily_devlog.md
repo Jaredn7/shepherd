@@ -108,29 +108,6 @@
 ### Open questions
 - None.
 
-## 2026-06-03 — Stop invite page reload loop
-
-### Session intent
-- **Goal:** End Safari cycling “Saving invite / Opening Shepherd”; app must open via `shepherd://` once.
-- **Trigger:** Boss — page reloads, app never opens; UL attempt from JS was reloading the page.
-- **Status:** complete — pushed to Vercel.
-
-### Context & decisions
-- **Decision:** Remove in-page Universal Link navigation entirely; one `sessionStorage` flow flag per code; scheme-only auto-open; no `blur` timer cancel.
-- **Reason:** Programmatic UL click navigated to `/i/CODE` → full reload → `run()` again → infinite loop. Apple UL from WhatsApp is OS-level only.
-- **Rejected:** Hidden anchor + scheme after 800ms — still caused reloads and cancelled timers on dialog blur.
-- **Discussed with user:** Yes — installed app never opened due to loop, not missing welcome package.
-
-### Technical contract
-1. **High-Level Summary:** Invite page runs once per code per tab, records click, triggers single `shepherd://` open, 6s store fallback. Reload shows “Tap Open in Shepherd below.”
-2. **File Paths:** `Web/assets/invite.js` — simplified open path, `flowStorageKey` guard.
-3. **Public Interfaces Exported:** None.
-4. **State Mutations:** None server-side.
-5. **Cross-Platform Constraints:** Universal Links still work when user taps https invite from WhatsApp **before** Safari loads (iOS + entitlements). Web must not self-navigate to `/i/CODE`.
-
-### Open questions
-- None.
-
 ## 2026-06-03 — Fix false “another device” on invite reload
 
 ### Session intent
@@ -153,25 +130,24 @@
 ### Open questions
 - None.
 
-## 2026-06-03 — Stop invite page reload loop
+## 2026-06-03 — Landing page = install path only (copy + AASA paths)
 
 ### Session intent
-- **Goal:** End Safari cycling “Saving invite / Opening Shepherd”; app must open via `shepherd://` once.
-- **Trigger:** Boss — page reloads, app never opens; UL attempt from JS was reloading the page.
-- **Status:** complete — pushed to Vercel.
+- **Goal:** Align web with “Safari only when app not installed”; fix AASA for `/i/CODE` links.
+- **Trigger:** Same session as iOS installed-app path.
+- **Status:** complete — pushed.
 
 ### Context & decisions
-- **Decision:** Remove in-page Universal Link navigation entirely; one `sessionStorage` flow flag per code; scheme-only auto-open; no `blur` timer cancel.
-- **Reason:** Programmatic UL click navigated to `/i/CODE` → full reload → `run()` again → infinite loop. Apple UL from WhatsApp is OS-level only.
-- **Rejected:** Hidden anchor + scheme after 800ms — still caused reloads and cancelled timers on dialog blur.
-- **Discussed with user:** Yes — installed app never opened due to loop, not missing welcome package.
+- **Decision:** AASA paths `["/i", "/i/", "/i/*"]`; page copy says direct open if app installed; web still fingerprint + scheme try + 6s store.
+- **Reason:** Elders now share path URLs; web is deferred-install safety net.
+- **Discussed with user:** Yes.
 
 ### Technical contract
-1. **High-Level Summary:** Invite page runs once per code per tab, records click, triggers single `shepherd://` open, 6s store fallback. Reload shows “Tap Open in Shepherd below.”
-2. **File Paths:** `Web/assets/invite.js` — simplified open path, `flowStorageKey` guard.
+1. **High-Level Summary:** Web explains install-first role; does not replace OS Universal Link for installed users.
+2. **File Paths:** `Web/i/index.html`, `Web/assets/invite.js`, `Web/.well-known/apple-app-site-association`.
 3. **Public Interfaces Exported:** None.
-4. **State Mutations:** None server-side.
-5. **Cross-Platform Constraints:** Universal Links still work when user taps https invite from WhatsApp **before** Safari loads (iOS + entitlements). Web must not self-navigate to `/i/CODE`.
+4. **State Mutations:** None.
+5. **Cross-Platform Constraints:** iOS must share `/i/CODE` links (path, not query-only) for reliable AASA.
 
 ### Open questions
 - None.

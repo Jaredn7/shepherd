@@ -84,3 +84,26 @@
 ### Log out (2026-06-03)
 - **`SessionService.logout()`**: batch-deletes Core Data, `resetOnboarding`, regenerates crypto keys, clears invite auto-join state.
 - **Home** toolbar + **Waiting for approval** screen: Log Out with confirmation → returns to onboarding.
+
+## 2026-06-03 — Installed-app path: Universal Link first
+
+### Session intent
+- **Goal:** App installed → tap invite → open Shepherd with code → welcome package; Safari landing only for install-later.
+- **Trigger:** Boss approved product split (Path 1 deferred vs Path 2 direct).
+- **Status:** complete — **rebuild required on device**.
+
+### Context & decisions
+- **Decision:** Elder shares `https://host/i/CODE` (path URL); `onContinueUserActivity` + `onOpenURL`; app `recordInviteClick` + join; deferred fingerprint join only when no URL.
+- **Reason:** Query-only `/i/?code=` did not match AASA `/i/*`; in-page UL navigation caused Safari loops.
+- **Rejected:** Website auto-open for installed users — cannot detect install from web; OS Universal Link is the correct gate.
+- **Discussed with user:** Yes — fingerprint is for App Store path, not when app already on phone.
+
+### Technical contract
+1. **High-Level Summary:** WhatsApp tap with app installed should skip Safari. App claims invite in-app. Web remains install + fingerprint + 6s store fallback.
+2. **File Paths:** `OnboardingService.inviteURL`, `InviteDeepLinkHandler.swift`, `ShepherdApp.swift`, `RootView.swift`, `Web/.well-known/apple-app-site-association`.
+3. **Public Interfaces Exported:** `inviteURL(for:)` → `https://{inviteHost}/i/{CODE}`; `attemptDeferredFingerprintJoinIfNeeded`.
+4. **State Mutations:** Fresh user opening `https://…/i/CODE` → linked after welcome package (same as before, entry is app not Safari).
+5. **Cross-Platform Constraints:** **Web-Public:** landing copy clarifies install-only role. **Android:** needs `assetlinks.json` for parallel direct-open later.
+
+### Open questions
+- Boss must reinstall from Xcode after entitlements change.
