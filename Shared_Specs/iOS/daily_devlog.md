@@ -107,3 +107,22 @@
 
 ### Open questions
 - Boss must reinstall from Xcode after entitlements change.
+
+## 2026-06-03 — Fix EXC_BREAKPOINT on publisher detail link status
+
+### Session intent
+- **Goal:** Stop crash when opening publisher detail (`isDeviceLinked` line).
+- **Trigger:** Runtime `EXC_BREAKPOINT` on `CongregationSyncService.shared.isDeviceLinked` from `PublisherDetailView.linkStatus`.
+- **Status:** complete.
+
+### Context & decisions
+- **Decision:** Read `DeviceDirectoryEntry` via view `managedObjectContext` in `PublisherDetailView`; same for `ElderAccessRequestsView.publisherTitle`.
+- **Reason:** `CongregationSyncService` is `@MainActor`; SwiftUI computed properties are not — cross-actor call traps at runtime.
+- **Rejected:** Removing `@MainActor` from entire sync service — async bus paths still need main isolation.
+
+### Technical contract
+1. **High-Level Summary:** Publisher detail and elder requests list no longer call `@MainActor` service from synchronous view code.
+2. **File Paths:** `PublisherDetailView.swift`, `ElderAccessRequestsView.swift`.
+3. **Public Interfaces Exported:** `deviceLinkExists(for:)` private helper on detail view only.
+4. **State Mutations:** None.
+5. **Cross-Platform Constraints:** Pattern for Tier A: do not call `@MainActor` singletons from SwiftUI computed `var` bodies — use `@Environment` context or `.task` on MainActor.

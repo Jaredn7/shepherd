@@ -50,13 +50,21 @@ struct PublisherDetailView: View {
     }
 
     private var linkStatus: PublisherLinkStatus {
-        if CongregationSyncService.shared.isDeviceLinked(publisherId: publisher.id) {
+        if deviceLinkExists(for: publisher.id) {
             return .linked
         }
         if pendingAccessRequests.contains(where: { $0.publisherId == publisher.id }) {
             return .pendingApproval
         }
         return .unlinked
+    }
+
+    /// Core Data read on the view context — avoids calling `@MainActor` sync service from view body.
+    private func deviceLinkExists(for publisherId: UUID) -> Bool {
+        let request = NSFetchRequest<DeviceDirectoryEntry>(entityName: "DeviceDirectoryEntry")
+        request.predicate = NSPredicate(format: "publisherId == %@", publisherId as CVarArg)
+        request.fetchLimit = 1
+        return (try? context.fetch(request).first) != nil
     }
 
     var body: some View {

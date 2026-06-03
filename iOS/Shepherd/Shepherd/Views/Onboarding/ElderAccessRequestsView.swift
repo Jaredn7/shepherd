@@ -68,8 +68,13 @@ struct ElderAccessRequestsView: View {
     }
 
     private func publisherTitle(for request: AccessRequest) -> String {
-        guard let publisherId = request.publisherId,
-              let publisher = try? CongregationSyncService.shared.publisher(for: publisherId) else {
+        guard let publisherId = request.publisherId else {
+            return "Publisher access request"
+        }
+        let fetch = NSFetchRequest<Publisher>(entityName: "Publisher")
+        fetch.predicate = NSPredicate(format: "id == %@", publisherId as CVarArg)
+        fetch.fetchLimit = 1
+        guard let publisher = try? context.fetch(fetch).first else {
             return "Publisher access request"
         }
         return "\(publisher.lastName), \(publisher.firstName)"
