@@ -79,10 +79,6 @@
     return `shepherd_invite_click_${inviteCode}`;
   }
 
-  function flowStorageKey(inviteCode) {
-    return `shepherd_invite_flow_${inviteCode}`;
-  }
-
   async function recordClick(inviteCode, fingerprint) {
     if (sessionStorage.getItem(clickStorageKey(inviteCode)) === "1") {
       return { ok: true, already_recorded: true };
@@ -161,29 +157,29 @@
       cancelStoreRedirect();
     });
 
-    const flowKey = flowStorageKey(inviteCode);
-    if (sessionStorage.getItem(flowKey) === "1") {
-      setStatus("Tap Open in Shepherd below if the app didn’t open.");
-      scheduleStoreRedirectIfStillOnPage();
-      return;
-    }
-    sessionStorage.setItem(flowKey, "1");
+    const alreadySaved = sessionStorage.getItem(clickStorageKey(inviteCode)) === "1";
 
     try {
-      setStatus("Saving your invite for this device…");
-      await recordClick(inviteCode, buildFingerprint());
-      setStatus("Opening Shepherd if installed…");
+      if (!alreadySaved) {
+        setStatus("Saving your invite for this device…");
+        await recordClick(inviteCode, buildFingerprint());
+      }
+
+      setStatus("Opening Shepherd… Tap Open if iOS asks.");
       if (detectOS() === "iOS" || detectOS() === "Android") {
         tryOpenApp(inviteCode);
       }
-      setStatus("Redirecting to the App Store if you need to install…");
       scheduleStoreRedirectIfStillOnPage();
     } catch (error) {
       console.error(error);
-      setStatus(
-        error instanceof Error ? error.message : "Something went wrong. Try opening the link again.",
-        true
-      );
+      const message = error instanceof Error ? error.message : "Something went wrong.";
+      if (sessionStorage.getItem(clickStorageKey(inviteCode)) === "1") {
+        setStatus("Opening Shepherd… Tap Open in Shepherd below if needed.");
+        tryOpenApp(inviteCode);
+        scheduleStoreRedirectIfStillOnPage();
+        return;
+      }
+      setStatus(message, true);
     }
   }
 

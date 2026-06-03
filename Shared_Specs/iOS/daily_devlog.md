@@ -126,3 +126,25 @@
 3. **Public Interfaces Exported:** `deviceLinkExists(for:)` private helper on detail view only.
 4. **State Mutations:** None.
 5. **Cross-Platform Constraints:** Pattern for Tier A: do not call `@MainActor` singletons from SwiftUI computed `var` bodies — use `@Environment` context or `.task` on MainActor.
+
+## 2026-06-03 — Universal Link reliability (AppDelegate + developer mode)
+
+### Session intent
+- **Goal:** Tap invite link opens Shepherd when app is installed (Xcode/dev builds included).
+- **Trigger:** Boss — link opens Safari only; app never launches.
+- **Status:** complete — rebuild iOS; wait for AASA CDN; verify Apple Developer Associated Domains on App ID.
+
+### Context & decisions
+- **Decision:** `AppDelegate` for `continue userActivity` + `open url`; `applinks:…?mode=developer` entitlement; modern AASA `components`; web always retries `shepherd://` even if fingerprint already saved.
+- **Reason:** SwiftUI-only UL handlers miss some deliveries; dev builds need developer associated domain; `flowStorageKey` skipped scheme retry on reload.
+- **Rejected:** In-page Universal Link navigation (reload loop).
+
+### Technical contract
+1. **High-Level Summary:** OS should open app from WhatsApp https link; Safari fallback always attempts scheme + manual link.
+2. **File Paths:** `AppDelegate.swift`, `ShepherdApp.swift`, `Shepherd.entitlements`, `Web/.well-known/apple-app-site-association`, `Web/assets/invite.js`.
+3. **Public Interfaces Exported:** `AppDelegate` UIApplicationDelegate methods.
+4. **State Mutations:** None.
+5. **Cross-Platform Constraints:** Enable **Associated Domains** on App ID `app.shepherd.Shepherd` in Apple Developer portal if still failing after rebuild.
+
+### Open questions
+- Confirm portal capability + delete/reinstall app after entitlement change.

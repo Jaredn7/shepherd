@@ -5,6 +5,7 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:shepherd-pi-nine.vercel.app</string>
+		<string>applinks:shepherd-pi-nine.vercel.app?mode=developer</string>
 	</array>
 </dict>
 </plist>

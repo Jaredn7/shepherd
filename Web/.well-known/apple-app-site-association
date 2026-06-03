@@ -3,8 +3,12 @@
     "apps": [],
     "details": [
       {
-        "appID": "W3TV52BXQ2.app.shepherd.Shepherd",
-        "paths": ["/i", "/i/", "/i/*"]
+        "appIDs": ["W3TV52BXQ2.app.shepherd.Shepherd"],
+        "components": [
+          { "/": "/i/*" },
+          { "/": "/i" },
+          { "/": "/i/" }
+        ]
       }
     ]
   }
