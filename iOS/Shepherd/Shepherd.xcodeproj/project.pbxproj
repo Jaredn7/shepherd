@@ -82,6 +82,11 @@
 				TargetAttributes = {
 					DF19EAC42FC8AF5700D3BE00 = {
 						CreatedOnToolsVersion = 26.4;
+						SystemCapabilities = {
+							com.apple.AssociatedDomains = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};

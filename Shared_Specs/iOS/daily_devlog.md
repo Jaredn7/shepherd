@@ -148,3 +148,23 @@
 
 ### Open questions
 - Confirm portal capability + delete/reinstall app after entitlement change.
+
+## 2026-06-03 — Apple associated-domains doc audit
+
+### Session intent
+- **Goal:** Align with [Supporting associated domains](https://developer.apple.com/documentation/xcode/supporting-associated-domains); explain Safari + modal vs true UL.
+- **Trigger:** Boss — not WhatsApp; asked if we implemented UL wrong.
+- **Status:** complete — `SystemCapabilities` added; device Developer Mode + opt-in required for `?mode=developer`.
+
+### Context & decisions
+- **Decision:** Register `com.apple.AssociatedDomains` in `project.pbxproj`; document Apple CDN delay (24h) vs `developer` alternate mode requirements.
+- **Reason:** Entitlements file alone ≠ Xcode capability on App ID; `developer` mode only works with dev-signed build + device Developer Mode + user opt-in per Apple entitlement doc.
+- **Rejected:** Blaming WhatsApp — Apple path is https AASA + entitlements; Safari means UL did not claim the link.
+
+### Technical contract
+1. **AASA/host OK:** `https://shepherd-pi-nine.vercel.app/.well-known/apple-app-site-association` — 200, `application/json`, no redirect; `appIDs` = `W3TV52BXQ2.app.shepherd.Shepherd`.
+2. **Was wrong/missing:** Associated Domains capability not in `TargetAttributes` (fixed); boss may lack **Developer Mode** + **Associated Domains Development** toggle for `?mode=developer`.
+3. **Safari + “Open?” sheet:** Expected when UL fails — sheet is `shepherd://` from web, not Universal Links.
+
+### Open questions
+- After Developer Mode + reinstall, retest https link (any app, including WhatsApp).
