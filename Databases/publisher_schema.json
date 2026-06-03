@@ -1,0 +1,39 @@
+{
+  "_metadata": {
+    "model_name": "Publisher",
+    "description": "Represents a baptized or unbaptized publisher in the congregation. This is the exact JSON payload sent over the wire."
+  },
+  "field_dictionary": {
+    "id": "UUID - Primary identifier.",
+    "first_name": "String - Publisher's first name.",
+    "last_name": "String - Publisher's last name.",
+    "phone_number": "String (Optional) - Contact number.",
+    "email": "String (Optional) - Email address.",
+    "privilege": "String (Enum) - 'publisher', 'ministerialServant', 'elder'.",
+    "pioneer_status": "String (Enum) - 'none', 'auxiliaryPioneer', 'regularPioneer', 'specialPioneer'.",
+    "service_group_id": "UUID (Optional) - Link to the Service Group.",
+    "roles": "Array of Strings - Specific congregation responsibilities.",
+    "public_key": "String (Optional) - Base64 encoded P-256 public key for E2EE.",
+    "is_active": "Boolean - Whether the publisher is currently active.",
+    "created_at": "ISO 8601 Date - Creation timestamp.",
+    "updated_at": "ISO 8601 Date - Last update timestamp."
+  },
+  "example_payload": {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "first_name": "Jared",
+    "last_name": "Naidoo",
+    "phone_number": "+1234567890",
+    "email": "jared@example.com",
+    "privilege": "elder",
+    "pioneer_status": "regularPioneer",
+    "service_group_id": "987fcdeb-51a2-43d7-9012-345678901234",
+    "roles": [
+      "secretary",
+      "publicTalksCoordinator"
+    ],
+    "public_key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE...",
+    "is_active": true,
+    "created_at": "2026-05-28T14:30:00Z",
+    "updated_at": "2026-05-28T14:30:00Z"
+  }
+}

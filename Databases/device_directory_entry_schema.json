@@ -1,0 +1,22 @@
+{
+  "_metadata": {
+    "model_name": "DeviceDirectoryEntry",
+    "description": "Maps a publisher to an anonymous device ID and P-256 public key for blind routing."
+  },
+  "field_dictionary": {
+    "id": "UUID - Primary identifier for this directory row.",
+    "publisher_id": "UUID (Optional) - Linked publisher record.",
+    "device_id": "UUID - Anonymous device identifier stored in Keychain.",
+    "public_key": "String - Base64 P-256 public key for E2EE.",
+    "is_elder": "Boolean - Whether this device holds a full elder directory.",
+    "updated_at": "ISO 8601 Date - Last directory update."
+  },
+  "example_payload": {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "publisher_id": "987fcdeb-51a2-43d7-9012-345678901234",
+    "device_id": "456e7890-e89b-12d3-a456-426614174999",
+    "public_key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE...",
+    "is_elder": false,
+    "updated_at": "2026-05-29T12:00:00Z"
+  }
+}

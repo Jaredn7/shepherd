@@ -1,0 +1,27 @@
+{
+  "_metadata": {
+    "model_name": "LockboxInstruction",
+    "description": "Decrypted instruction-manual payload applied to the local Core Data database."
+  },
+  "field_dictionary": {
+    "action": "String (Enum) - 'INSERT', 'UPDATE', 'DELETE', 'WIPE_DATABASE', 'ACCESS_REQUEST', 'LINKED'.",
+    "table": "String - Target entity: 'Publisher', 'ServiceGroup', 'DeviceDirectoryEntry'.",
+    "record_id": "UUID - Primary key of the record to mutate.",
+    "data": "Object - Field payload for INSERT/UPDATE operations.",
+    "timestamp": "ISO 8601 Date - Conflict resolution ordering.",
+    "instructions": "Array (Optional) - Nested instructions for welcome_package batches."
+  },
+  "example_payload": {
+    "action": "INSERT",
+    "table": "Publisher",
+    "record_id": "123e4567-e89b-12d3-a456-426614174000",
+    "data": {
+      "first_name": "Jared",
+      "last_name": "Naidoo",
+      "privilege": "publisher",
+      "pioneer_status": "none",
+      "is_active": true
+    },
+    "timestamp": "2026-05-29T12:00:00Z"
+  }
+}

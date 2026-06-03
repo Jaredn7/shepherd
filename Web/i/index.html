@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Join Shepherd</title>
+    <meta
+      name="description"
+      content="Accept your congregation invite and open the Shepherd app."
+    />
+    <link rel="stylesheet" href="../assets/invite.css" />
+  </head>
+  <body>
+    <div class="mesh-bg" aria-hidden="true"></div>
+
+    <main class="card" role="main">
+      <div class="logo-row">
+        <div class="logo-mark" aria-hidden="true">🐑</div>
+        <div>
+          <strong>Shepherd</strong>
+          <div style="color: var(--text-muted); font-size: 0.82rem">Congregation invite</div>
+        </div>
+      </div>
+
+      <h1>You’re invited</h1>
+      <p class="lead">
+        We’re connecting you to your congregation in Shepherd. This page will try to open the app,
+        or send you to the App Store if you need to install it first.
+      </p>
+
+      <div class="status" id="status">
+        <div class="spinner" aria-hidden="true"></div>
+        <span id="status-text">Preparing your invite…</span>
+      </div>
+
+      <p class="meta">
+        Invite code: <code id="invite-code">…</code><br />
+        If nothing happens after installing, tap this link again from your elder’s message.
+      </p>
+
+      <a class="manual-link" id="manual-link" href="#">Open in Shepherd</a>
+    </main>
+
+    <script src="../config.js"></script>
+    <script src="../assets/invite.js"></script>
+  </body>
+</html>

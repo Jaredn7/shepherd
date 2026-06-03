@@ -1,0 +1,23 @@
+{
+  "_metadata": {
+    "model_name": "ServiceGroup",
+    "description": "Represents a field service group within the congregation."
+  },
+  "field_dictionary": {
+    "id": "UUID - Primary identifier.",
+    "name": "String - Name of the group.",
+    "overseer_id": "UUID (Optional) - Publisher ID of the group overseer.",
+    "assistant_ids": "Array of UUIDs - Publisher IDs of the assistants.",
+    "created_at": "ISO 8601 Date - Creation timestamp."
+  },
+  "example_payload": {
+    "id": "987fcdeb-51a2-43d7-9012-345678901234",
+    "name": "Group 1",
+    "overseer_id": "123e4567-e89b-12d3-a456-426614174000",
+    "assistant_ids": [
+      "555e4567-e89b-12d3-a456-426614174555",
+      "666e4567-e89b-12d3-a456-426614174666"
+    ],
+    "created_at": "2026-05-28T14:30:00Z"
+  }
+}

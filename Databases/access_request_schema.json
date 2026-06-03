@@ -1,0 +1,22 @@
+{
+  "_metadata": {
+    "model_name": "AccessRequest",
+    "description": "Local queue of publisher onboarding requests awaiting elder approval."
+  },
+  "field_dictionary": {
+    "id": "UUID - Primary identifier.",
+    "requester_device_id": "UUID - Anonymous device ID of the requesting publisher.",
+    "requester_public_key": "String - Base64 P-256 public key from the access_request lockbox.",
+    "publisher_id": "UUID (optional) - Pre-created publisher record this device is linking to (from invite).",
+    "requested_at": "ISO 8601 Date - When the request was received.",
+    "status": "String (Enum) - 'pending', 'approved', 'rejected'."
+  },
+  "example_payload": {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "requester_device_id": "456e7890-e89b-12d3-a456-426614174999",
+    "requester_public_key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE...",
+    "publisher_id": "789e0123-e89b-12d3-a456-426614175111",
+    "requested_at": "2026-05-29T12:00:00Z",
+    "status": "pending"
+  }
+}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Join Shepherd</title>
+    <script>
+      (function () {
+        var path = window.location.pathname || "";
+        var match = path.match(/\/i\/([^/?#]+)/i);
+        if (!match) return;
+
+        var code = decodeURIComponent(match[1]);
+        var prefix = path.slice(0, path.toLowerCase().indexOf("/i/"));
+        var target = prefix + "/i/?code=" + encodeURIComponent(code);
+        window.location.replace(target);
+      })();
+    </script>
+  </head>
+  <body>
+    <p>Redirecting to your invite…</p>
+  </body>
+</html>

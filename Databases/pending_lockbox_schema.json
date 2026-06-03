@@ -1,0 +1,24 @@
+{
+  "_metadata": {
+    "model_name": "PendingLockbox",
+    "description": "The exact structure of the encrypted E2E payload sent through the Bus Station."
+  },
+  "field_dictionary": {
+    "type": "String - Identifies the payload type (e.g., 'directory_update').",
+    "sender_public_key": "String - Base64 encoded P-256 public key of the sender.",
+    "iv": "String - Base64 encoded 12-byte initialization vector (nonce).",
+    "ciphertext": "String - Base64 encoded AES-256-GCM encrypted payload.",
+    "auth_tag": "String - Base64 encoded 16-byte authentication tag.",
+    "remote_id": "UUID (Optional) - Supabase lockboxes row ID for ACK deletion.",
+    "sender_device_id": "UUID (Optional) - Anonymous sender device shipping label.",
+    "timestamp": "ISO 8601 Date - When the payload was generated."
+  },
+  "example_payload": {
+    "type": "directory_update",
+    "sender_public_key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE...",
+    "iv": "u9zV/8bWwYm7k/==",
+    "ciphertext": "aGVsbG8gd29ybGQ=",
+    "auth_tag": "qTz9/8bGgYm7k/==",
+    "timestamp": "2026-05-28T14:30:00Z"
+  }
+}

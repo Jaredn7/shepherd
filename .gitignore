@@ -1,0 +1,13 @@
+.DS_Store
+*.swp
+*.swo
+
+# Supabase CLI temp
+supabase/.temp/
+
+# Xcode user-specific
+**/xcuserdata/
+*.xcuserstate
+
+# Optional: uncomment to keep local Web overrides out of git
+# Web/config.js
