@@ -12,6 +12,7 @@ final class DeviceIdentityBridge: ObservableObject {
     static let shared = DeviceIdentityBridge()
 
     @Published var onboardingState: OnboardingState
+    @Published var inviteJoinError: String?
 
     private init() {
         onboardingState = DeviceIdentityManager.shared.onboardingState

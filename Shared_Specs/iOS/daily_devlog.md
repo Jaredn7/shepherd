@@ -68,3 +68,10 @@
 - **`invite-resolve`** returns welcome package but does not consume it (retry if download interrupted).
 - **`invite-ack`** edge function: phone confirms safe local apply → clears `welcome_package`, sets `claimed_at`, marks fingerprint completed.
 - iOS `joinWithPreApprovedInvite`: resolve → apply → verify → ack (user can retry until ack succeeds).
+
+### Deep link auto-join + Vercel invite host (2026-06-03)
+- **`InviteDeepLinkHandler`**: `shepherd://invite?code=…`, auto `joinWithPreApprovedInvite` on cold start / foreground (fingerprint or code).
+- **`AppInfo.plist`**: URL scheme `shepherd`; bundle `app.shepherd.Shepherd`, team `W3TV52BXQ2` (Xcode).
+- **`INVITE_HOST`**: `https://shepherd-pi-nine.vercel.app` (iOS plist + Web `config.js`).
+- **Root `vercel.json`**: `outputDirectory: Web`, rewrite `/i/:code` → invite page.
+- **Web-Public**: JW Library App Store URL as temporary install proxy until Shepherd ships.

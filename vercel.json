@@ -1,0 +1,12 @@
+{
+  "outputDirectory": "Web",
+  "rewrites": [
+    { "source": "/i/:code", "destination": "/i/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/.well-known/(.*)",
+      "headers": [{ "key": "Content-Type", "value": "application/json" }]
+    }
+  ]
+}

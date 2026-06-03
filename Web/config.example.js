@@ -23,7 +23,7 @@ window.SHEPHERD_INVITE_CONFIG = {
    * Your public invite host (no trailing slash).
    * Used for Universal Link open attempts, e.g. https://join.yourdomain.com
    */
-  inviteHost: "https://join.yourdomain.com",
+  inviteHost: "https://shepherd-pi-nine.vercel.app",
 
   /** Milliseconds to wait after trying to open the app before store redirect */
   redirectDelayMs: 2500,

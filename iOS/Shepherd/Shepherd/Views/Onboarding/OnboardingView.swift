@@ -27,8 +27,8 @@ struct OnboardingView: View {
                         publisherSection
                     }
 
-                    if let errorMessage {
-                        Text(errorMessage)
+                    if let message = errorMessage ?? identityBridge.inviteJoinError {
+                        Text(message)
                             .font(ShepherdFont.caption())
                             .foregroundStyle(ShepherdColors.accent)
                     }
@@ -128,6 +128,7 @@ struct OnboardingView: View {
     private func joinWithInvite() {
         isLoading = true
         errorMessage = nil
+        identityBridge.inviteJoinError = nil
         Task {
             do {
                 let code = inviteCode.trimmingCharacters(in: .whitespacesAndNewlines)

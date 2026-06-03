@@ -7,6 +7,6 @@
 	<key>SUPABASE_ANON_KEY</key>
 	<string>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpydGlubmh3ZnJ5Z2l6dWFnc3F6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMDI5NDIsImV4cCI6MjA5NTU3ODk0Mn0.ki9ksfacK-3zTZaSBRygdckmEvYA9vmNyETnAOgcerA</string>
 	<key>INVITE_HOST</key>
-	<string>https://join.yourdomain.com</string>
+	<string>https://shepherd-pi-nine.vercel.app</string>
 </dict>
 </plist>
