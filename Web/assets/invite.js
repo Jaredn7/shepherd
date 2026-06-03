@@ -7,9 +7,35 @@
   const codeEl = document.getElementById("invite-code");
   const manualLink = document.getElementById("manual-link");
 
+  let storeRedirectTimer = null;
+  let universalFallbackTimer = null;
+  let redirectWatchersInstalled = false;
+
   function setStatus(message, isError) {
     statusEl.textContent = message;
     statusBox.classList.toggle("error", Boolean(isError));
+  }
+
+  function cancelPendingRedirects() {
+    if (storeRedirectTimer !== null) {
+      window.clearTimeout(storeRedirectTimer);
+      storeRedirectTimer = null;
+    }
+    if (universalFallbackTimer !== null) {
+      window.clearTimeout(universalFallbackTimer);
+      universalFallbackTimer = null;
+    }
+  }
+
+  function installRedirectCancellation() {
+    if (redirectWatchersInstalled) return;
+    redirectWatchersInstalled = true;
+
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) cancelPendingRedirects();
+    });
+    window.addEventListener("pagehide", cancelPendingRedirects);
+    window.addEventListener("blur", cancelPendingRedirects);
   }
 
   function readInviteCode() {
@@ -95,8 +121,11 @@
 
     if (detectOS() === "iOS") {
       window.location.href = schemeUrl;
-      window.setTimeout(function () {
-        window.location.href = universalUrl;
+      universalFallbackTimer = window.setTimeout(function () {
+        universalFallbackTimer = null;
+        if (!document.hidden) {
+          window.location.href = universalUrl;
+        }
       }, 350);
       return;
     }
@@ -104,11 +133,17 @@
     window.location.href = schemeUrl;
   }
 
-  function storeRedirect(inviteCode) {
+  function scheduleStoreRedirectIfStillOnPage() {
     const os = detectOS();
     const delay = Number(config?.redirectDelayMs) || 2500;
 
-    window.setTimeout(function () {
+    installRedirectCancellation();
+    cancelPendingRedirects();
+
+    storeRedirectTimer = window.setTimeout(function () {
+      storeRedirectTimer = null;
+      if (document.hidden) return;
+
       if (os === "Android" && config?.playStoreUrl) {
         window.location.href = config.playStoreUrl;
         return;
@@ -129,13 +164,16 @@
 
     codeEl.textContent = inviteCode;
     manualLink.href = `${(config?.appScheme || "shepherd")}://invite?code=${encodeURIComponent(inviteCode)}`;
+    manualLink.addEventListener("click", function () {
+      cancelPendingRedirects();
+    });
 
     try {
       setStatus("Saving your invite…");
       await recordClick(inviteCode, buildFingerprint());
       setStatus("Opening Shepherd…");
       tryOpenApp(inviteCode);
-      storeRedirect(inviteCode);
+      scheduleStoreRedirectIfStillOnPage();
     } catch (error) {
       console.error(error);
       setStatus(
