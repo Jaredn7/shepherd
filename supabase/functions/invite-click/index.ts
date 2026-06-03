@@ -1,6 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { handleOptions, jsonResponse } from "../_shared/cors.ts";
-import { normalizeInviteCode } from "../_shared/invite.ts";
+import { fingerprintMatches, normalizeInviteCode } from "../_shared/invite.ts";
 import { serviceClient } from "../_shared/supabase.ts";
 
 Deno.serve(async (req) => {
@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
 
   const { data: session, error: fetchError } = await supabase
     .from("invite_sessions")
-    .select("id, expires_at, claimed_at, clicked_at")
+    .select("id, expires_at, claimed_at, clicked_at, fingerprint")
     .eq("invite_code", normalizedCode)
     .maybeSingle();
 
@@ -55,6 +55,10 @@ Deno.serve(async (req) => {
   }
 
   if (session.clicked_at) {
+    const stored = session.fingerprint as Record<string, unknown> | null;
+    if (fingerprintMatches(stored, fingerprint)) {
+      return jsonResponse({ ok: true, invite_code: normalizedCode, already_recorded: true });
+    }
     return jsonResponse({ error: "Invite link already opened on another device" }, 410);
   }
 

@@ -81,7 +81,15 @@
     };
   }
 
+  function clickStorageKey(inviteCode) {
+    return `shepherd_invite_click_${inviteCode}`;
+  }
+
   async function recordClick(inviteCode, fingerprint) {
+    if (sessionStorage.getItem(clickStorageKey(inviteCode)) === "1") {
+      return { ok: true, already_recorded: true };
+    }
+
     if (!config?.supabaseUrl || !config?.supabaseAnonKey) {
       throw new Error("Missing Supabase config. Copy config.example.js to config.js.");
     }
@@ -109,7 +117,19 @@
       throw new Error(payload.error || `Invite click failed (${response.status})`);
     }
 
-    return response.json();
+    const payload = await response.json();
+    sessionStorage.setItem(clickStorageKey(inviteCode), "1");
+    return payload;
+  }
+
+  function tryOpenUniversalLink(url) {
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.rel = "noopener";
+    anchor.style.display = "none";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
   }
 
   function tryOpenApp(inviteCode) {
@@ -120,9 +140,9 @@
     const universalUrl = `${host}/i/${encodeURIComponent(inviteCode)}`;
 
     if (detectOS() === "iOS") {
-      // Universal Link first (no "Open in app?" sheet when installed + configured).
-      // Same-domain navigation may stay in Safari; shepherd:// fallback covers that.
-      window.location.replace(universalUrl);
+      // Do not navigate to /i/CODE — that reloads the page and hits invite-click twice.
+      // Tap from WhatsApp uses OS Universal Links; here we nudge without a full reload.
+      tryOpenUniversalLink(universalUrl);
       universalFallbackTimer = window.setTimeout(function () {
         universalFallbackTimer = null;
         if (!document.hidden) {
@@ -178,8 +198,18 @@
       scheduleStoreRedirectIfStillOnPage();
     } catch (error) {
       console.error(error);
+      const message = error instanceof Error ? error.message : "Something went wrong.";
+      const alreadyRecorded =
+        message.indexOf("already opened on another device") !== -1 &&
+        sessionStorage.getItem(clickStorageKey(inviteCode)) === "1";
+      if (alreadyRecorded) {
+        setStatus("Opening Shepherd…");
+        tryOpenApp(inviteCode);
+        scheduleStoreRedirectIfStillOnPage();
+        return;
+      }
       setStatus(
-        error instanceof Error ? error.message : "Something went wrong. Try opening the link again.",
+        message || "Something went wrong. Try opening the link again.",
         true
       );
     }
