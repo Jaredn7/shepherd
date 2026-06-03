@@ -55,6 +55,28 @@ final class OnboardingService {
 
     // MARK: - Publisher Flow
 
+    /// Records the landing-page click when the app is opened via Universal Link (web may not have run).
+    func recordInviteClick(inviteCode: String) async throws {
+        let fingerprint = identity.deviceFingerprint()
+        let body: [String: Any] = [
+            "invite_code": inviteCode.uppercased(),
+            "fingerprint": fingerprint,
+        ]
+
+        let url = SupabaseConfig.functionsURL("invite-click")
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(SupabaseConfig.anonKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(SupabaseConfig.anonKey)", forHTTPHeaderField: "Authorization")
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+
+        let (_, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
+            throw OnboardingServiceError.network("Could not register invite click")
+        }
+    }
+
     func resolveInvite(inviteCode: String? = nil) async throws -> ResolvedInvite {
         let fingerprint = identity.deviceFingerprint()
         var body: [String: Any] = ["fingerprint": fingerprint]

@@ -48,3 +48,39 @@
 
 ### Open questions
 - None.
+
+## 2026-06-03 — Universal Links open order + 6s store delay
+
+### Session intent
+- **Goal:** Prefer Universal Links on iOS (no scheme sheet when possible); wait **6 seconds** before App Store proxy.
+- **Trigger:** Boss — 2.5s too short; enable full Universal Link path.
+- **Status:** complete — Web deployed via push; iOS requires rebuild/install on device.
+
+### Context & decisions
+- **Decision:** iOS tries `https://…/i/{code}` first, `shepherd://` after 800ms if still on page; store redirect at **6000ms**.
+- **Reason:** Apple shows “Open in app?” for custom schemes; Universal Links open installed apps without that sheet when tapping from external apps.
+- **Rejected:** Removing scheme entirely — same-domain Safari navigation often cannot UL-open; scheme remains fallback.
+- **Discussed with user:** Yes — six seconds; do Universal Links; high-level enablement list for boss.
+
+### Technical contract
+1. **High-Level Summary:** Store fallback is now six seconds. iOS invite open tries Universal Link URL before custom scheme. **iOS app** gains Associated Domains + https invite URL handling (records `invite-click` when opened directly from link).
+2. **File Paths:**
+   - `Web/config.js`, `Web/config.example.js` — `redirectDelayMs: 6000`.
+   - `Web/assets/invite.js` — Universal-first `tryOpenApp`, default delay 6000.
+   - `iOS/Shepherd/Shepherd/Shepherd.entitlements` — `applinks:shepherd-pi-nine.vercel.app`.
+   - `iOS/Shepherd/Shepherd.xcodeproj/project.pbxproj` — `CODE_SIGN_ENTITLEMENTS`.
+   - `iOS/.../InviteDeepLinkHandler.swift` — parse https `/i/` URLs; `recordInviteClick` before join.
+   - `iOS/.../OnboardingService.swift` — `recordInviteClick(inviteCode:)`.
+3. **Public Interfaces Exported:** `OnboardingService.recordInviteClick(inviteCode: String) async throws`.
+4. **State Mutations:** None server schema. **Before → after:** Longer wait before JW Library redirect; WhatsApp tap with app installed may open Shepherd directly without Safari sheet.
+5. **Cross-Platform Constraints:**
+   - **iOS:** Must rebuild with entitlements; `INVITE_HOST` must match AASA host (`shepherd-pi-nine.vercel.app`).
+   - **Web-Public:** `Web/.well-known/apple-app-site-association` must stay served as JSON on deploy.
+   - **Android/Mac/Windows:** No change until followers add `assetlinks.json` / platform UL equivalents.
+
+### Implementation notes
+- **Verification:** Reinstall Shepherd from Xcode; tap invite from WhatsApp (not Safari address bar).
+- **Friction:** Universal Links from a page already on the same domain may not hand off to the app — scheme fallback still applies.
+
+### Open questions
+- None.

@@ -7,5 +7,5 @@ window.SHEPHERD_INVITE_CONFIG = {
   playStoreUrl: "https://play.google.com/store/apps/details?id=com.shepherd.app",
   appScheme: "shepherd",
   inviteHost: "https://shepherd-pi-nine.vercel.app",
-  redirectDelayMs: 2500,
+  redirectDelayMs: 6000,
 };

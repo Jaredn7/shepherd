@@ -120,13 +120,15 @@
     const universalUrl = `${host}/i/${encodeURIComponent(inviteCode)}`;
 
     if (detectOS() === "iOS") {
-      window.location.href = schemeUrl;
+      // Universal Link first (no "Open in app?" sheet when installed + configured).
+      // Same-domain navigation may stay in Safari; shepherd:// fallback covers that.
+      window.location.replace(universalUrl);
       universalFallbackTimer = window.setTimeout(function () {
         universalFallbackTimer = null;
         if (!document.hidden) {
-          window.location.href = universalUrl;
+          window.location.href = schemeUrl;
         }
-      }, 350);
+      }, 800);
       return;
     }
 
@@ -135,7 +137,7 @@
 
   function scheduleStoreRedirectIfStillOnPage() {
     const os = detectOS();
-    const delay = Number(config?.redirectDelayMs) || 2500;
+    const delay = Number(config?.redirectDelayMs) || 6000;
 
     installRedirectCancellation();
     cancelPendingRedirects();

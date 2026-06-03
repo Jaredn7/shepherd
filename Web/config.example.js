@@ -26,5 +26,5 @@ window.SHEPHERD_INVITE_CONFIG = {
   inviteHost: "https://shepherd-pi-nine.vercel.app",
 
   /** Milliseconds to wait after trying to open the app before store redirect */
-  redirectDelayMs: 2500,
+  redirectDelayMs: 6000,
 };

@@ -12,6 +12,8 @@ struct HomeView: View {
 
     @Environment(\.managedObjectContext) private var context
     @State private var displayName = ""
+    @State private var showLogoutConfirmation = false
+    @State private var logoutErrorMessage: String?
 
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: .now)
@@ -44,10 +46,42 @@ struct HomeView: View {
                             glassToolbarButton(icon: "person.badge.key.fill", action: onElderTools)
                         }
                         glassToolbarButton(icon: "bell.fill", action: {})
+                        glassToolbarButton(icon: "rectangle.portrait.and.arrow.right", action: {
+                            showLogoutConfirmation = true
+                        })
                     }
                 }
             }
             .onAppear(perform: loadLinkedPublisher)
+            .confirmationDialog(
+                "Log out of Shepherd?",
+                isPresented: $showLogoutConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Log Out", role: .destructive, action: performLogout)
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("This removes congregation data from this iPhone. You can join again with an invite link.")
+            }
+            .alert(
+                "Could Not Log Out",
+                isPresented: Binding(
+                    get: { logoutErrorMessage != nil },
+                    set: { if !$0 { logoutErrorMessage = nil } }
+                )
+            ) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(logoutErrorMessage ?? "")
+            }
+        }
+    }
+
+    private func performLogout() {
+        do {
+            try SessionService.logout()
+        } catch {
+            logoutErrorMessage = error.localizedDescription
         }
     }
 

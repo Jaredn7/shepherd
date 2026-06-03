@@ -9,6 +9,8 @@ struct WaitingForApprovalView: View {
     @ObservedObject private var identityBridge = DeviceIdentityBridge.shared
     @ObservedObject private var syncCoordinator = SyncCoordinator.shared
     @State private var isRefreshing = false
+    @State private var showLogoutConfirmation = false
+    @State private var logoutErrorMessage: String?
 
     var body: some View {
         ZStack {
@@ -58,8 +60,36 @@ struct WaitingForApprovalView: View {
                         .padding(.horizontal, 24)
                 }
 
+                Button("Log Out") {
+                    showLogoutConfirmation = true
+                }
+                .font(ShepherdFont.caption())
+                .foregroundStyle(ShepherdColors.textSecondary)
+                .padding(.bottom, 24)
+
                 Spacer()
             }
+        }
+        .confirmationDialog(
+            "Log out of Shepherd?",
+            isPresented: $showLogoutConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Log Out", role: .destructive, action: performLogout)
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Your access request will be cleared from this device.")
+        }
+        .alert(
+            "Could Not Log Out",
+            isPresented: Binding(
+                get: { logoutErrorMessage != nil },
+                set: { if !$0 { logoutErrorMessage = nil } }
+            )
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(logoutErrorMessage ?? "")
         }
         .onAppear {
             isRefreshing = true
@@ -78,6 +108,14 @@ struct WaitingForApprovalView: View {
             await syncCoordinator.performSync()
             identityBridge.refresh()
             isRefreshing = false
+        }
+    }
+
+    private func performLogout() {
+        do {
+            try SessionService.logout()
+        } catch {
+            logoutErrorMessage = error.localizedDescription
         }
     }
 }

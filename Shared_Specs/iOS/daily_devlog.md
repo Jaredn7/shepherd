@@ -75,3 +75,12 @@
 - **`INVITE_HOST`**: `https://shepherd-pi-nine.vercel.app` (iOS plist + Web `config.js`).
 - **Root `vercel.json`**: `outputDirectory: Web`, rewrite `/i/:code` → invite page.
 - **Web-Public**: JW Library App Store URL as temporary install proxy until Shepherd ships.
+
+### Universal Links + invite URL handling (2026-06-03)
+- **`Shepherd.entitlements`**: `applinks:shepherd-pi-nine.vercel.app`.
+- **`InviteDeepLinkHandler`**: parses `https://…/i/{code}` and `?code=`; calls `recordInviteClick` then auto-join.
+- **`OnboardingService.recordInviteClick`**: mirrors web `invite-click` when app opens from Universal Link.
+
+### Log out (2026-06-03)
+- **`SessionService.logout()`**: batch-deletes Core Data, `resetOnboarding`, regenerates crypto keys, clears invite auto-join state.
+- **Home** toolbar + **Waiting for approval** screen: Log Out with confirmation → returns to onboarding.
